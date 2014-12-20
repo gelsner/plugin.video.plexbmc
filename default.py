@@ -1158,7 +1158,7 @@ def addGUIItem(url, details, extraData, context=None, folder=True):
                 #Play Transcoded
                 playTranscode=u+"&transcode=1"
                 plugin_url="XBMC.PlayMedia("+ playTranscode + ")"
-                context.insert(0,(__language__(30100), plugin_url , ))
+                context.append((__language__(30100), plugin_url , ))
                 printDebug("Setting transcode options to [%s]" % plugin_url)
 
             liz.addContextMenuItems( context, g_contextReplace )
@@ -1459,15 +1459,15 @@ def buildContextMenu( url, itemData ):
     plugin_url="RunScript(plugin.video.plexbmc, "
     ID=itemData.get('ratingKey','0')
 
-    #Mark media unwatched
-    unwatchURL="http://"+server+"/:/unscrobble?key="+ID+"&identifier=com.plexapp.plugins.library"+getAuthDetails(itemData)
-    unwatched=plugin_url+"watch, " + unwatchURL + ")"
-    context.append((__language__(30101), unwatched , ))
-
     #Mark media watched
     watchURL="http://"+server+"/:/scrobble?key="+ID+"&identifier=com.plexapp.plugins.library"+getAuthDetails(itemData)
     watched=plugin_url+"watch, " + watchURL + ")"
     context.append((__language__(30102), watched , ))
+
+    #Mark media unwatched
+    unwatchURL="http://"+server+"/:/unscrobble?key="+ID+"&identifier=com.plexapp.plugins.library"+getAuthDetails(itemData)
+    unwatched=plugin_url+"watch, " + unwatchURL + ")"
+    context.append((__language__(30101), unwatched , ))
 
     #Initiate Library refresh
     libraryRefresh = plugin_url+"update, " + refreshURL.split('?')[0]+getAuthDetails(itemData,prefix="?") + ")"
