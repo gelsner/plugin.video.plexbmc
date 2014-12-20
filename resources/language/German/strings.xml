@@ -100,9 +100,9 @@
 	<string id="30097">Hide watched recently added items</string>
 
 	<!-- context menu -->
-	<string id="30100">Play Transcoded</string>
-	<string id="30100">Mark as Unwatched</string>
-	<string id="30101">Mark as Watched</string>
-	<string id="30102">Rescan library section</string>
-	<string id="30103">Reload Section</string>
+	<string id="30100">Transcodiert abspielen</string>
+	<string id="30101">Als 'ungesehen' markieren</string>
+	<string id="30102">Als 'gesehen' markieren</string>
+	<string id="30103">Sektionsbibliothek aktualisieren</string>
+	<string id="30104">Liste aktualisieren</string>
 </strings>

@@ -62,6 +62,7 @@ __cachedir__ = __addon__.getAddonInfo('profile')
 __settings__ = xbmcaddon.Addon(id='plugin.video.plexbmc')
 #__cwd__ = __settings__.getAddonInfo('path')
 __cwd__ = xbmc.translatePath(__addon__.getAddonInfo('path')).decode('utf-8')
+__language__ = __addon__.getLocalizedString
 
 BASE_RESOURCE_PATH = xbmc.translatePath(os.path.join(__cwd__, 'resources', 'lib'))
 PLUGINPATH = xbmc.translatePath(os.path.join(__cwd__))
@@ -1157,7 +1158,7 @@ def addGUIItem(url, details, extraData, context=None, folder=True):
                 #Play Transcoded
                 playTranscode=u+"&transcode=1"
                 plugin_url="XBMC.PlayMedia("+ playTranscode + ")"
-                context.insert(0,('Play Transcoded', plugin_url , ))
+                context.insert(0,(__language__(30100), plugin_url , ))
                 printDebug("Setting transcode options to [%s]" % plugin_url)
 
             liz.addContextMenuItems( context, g_contextReplace )
@@ -1461,20 +1462,20 @@ def buildContextMenu( url, itemData ):
     #Mark media unwatched
     unwatchURL="http://"+server+"/:/unscrobble?key="+ID+"&identifier=com.plexapp.plugins.library"+getAuthDetails(itemData)
     unwatched=plugin_url+"watch, " + unwatchURL + ")"
-    context.append(('Mark as Unwatched', unwatched , ))
+    context.append((__language__(30101), unwatched , ))
 
     #Mark media watched
     watchURL="http://"+server+"/:/scrobble?key="+ID+"&identifier=com.plexapp.plugins.library"+getAuthDetails(itemData)
     watched=plugin_url+"watch, " + watchURL + ")"
-    context.append(('Mark as Watched', watched , ))
+    context.append((__language__(30102), watched , ))
 
     #Initiate Library refresh
     libraryRefresh = plugin_url+"update, " + refreshURL.split('?')[0]+getAuthDetails(itemData,prefix="?") + ")"
-    context.append(('Rescan library section', libraryRefresh , ))
+    context.append((__language__(30103), libraryRefresh , ))
 
     #Reload media section
     listingRefresh=plugin_url+"refresh)"
-    context.append(('Reload Section', listingRefresh , ))
+    context.append((__language__(30104), listingRefresh , ))
 
     printDebug("Using context menus " + str(context))
 
