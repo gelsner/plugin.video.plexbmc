@@ -1421,13 +1421,13 @@ def Movies( url, tree=None ):
     printDebug("== ENTER: Movies() ==", False)
     xbmcplugin.setContent(pluginhandle, 'movies')
     
-    xbmcplugin.addSortMethod(pluginhandle, 25 ) #video title ignore THE
-    xbmcplugin.addSortMethod(pluginhandle, 19 )  #date added
-    xbmcplugin.addSortMethod(pluginhandle, 3 )  #date
-    xbmcplugin.addSortMethod(pluginhandle, 18 ) #rating
-    xbmcplugin.addSortMethod(pluginhandle, 17 ) #year
-    xbmcplugin.addSortMethod(pluginhandle, 29 ) #runtime
-    xbmcplugin.addSortMethod(pluginhandle, 28 ) #by MPAA
+    #xbmcplugin.addSortMethod(pluginhandle, 25 ) #video title ignore THE
+    #xbmcplugin.addSortMethod(pluginhandle, 19 )  #date added
+    #xbmcplugin.addSortMethod(pluginhandle, 3 )  #date
+    #xbmcplugin.addSortMethod(pluginhandle, 18 ) #rating
+    #xbmcplugin.addSortMethod(pluginhandle, 17 ) #year
+    #xbmcplugin.addSortMethod(pluginhandle, 29 ) #runtime
+    #xbmcplugin.addSortMethod(pluginhandle, 28 ) #by MPAA
     
     #get the server name from the URL, which was passed via the on screen listing..
     tree=getXML(url,tree)
@@ -1657,14 +1657,14 @@ def TVSeasons( url ):
 def TVEpisodes( url, tree=None ):
     printDebug("== ENTER: TVEpisodes() ==", False)
     xbmcplugin.setContent(pluginhandle, 'episodes')
-    xbmcplugin.addSortMethod(pluginhandle, xbmcplugin.SORT_METHOD_EPISODE )  #episode
-    xbmcplugin.addSortMethod(pluginhandle, 3 )  #date
-    xbmcplugin.addSortMethod(pluginhandle, 25 ) #video title ignore THE
-    xbmcplugin.addSortMethod(pluginhandle, 19 )  #date added
-    xbmcplugin.addSortMethod(pluginhandle, 18 ) #rating
-    xbmcplugin.addSortMethod(pluginhandle, 17 ) #year
-    xbmcplugin.addSortMethod(pluginhandle, 29 ) #runtime
-    xbmcplugin.addSortMethod(pluginhandle, 28 ) #by MPAA
+    #xbmcplugin.addSortMethod(pluginhandle, xbmcplugin.SORT_METHOD_EPISODE )  #episode
+    #xbmcplugin.addSortMethod(pluginhandle, 3 )  #date
+    #xbmcplugin.addSortMethod(pluginhandle, 25 ) #video title ignore THE
+    #xbmcplugin.addSortMethod(pluginhandle, 19 )  #date added
+    #xbmcplugin.addSortMethod(pluginhandle, 18 ) #rating
+    #xbmcplugin.addSortMethod(pluginhandle, 17 ) #year
+    #xbmcplugin.addSortMethod(pluginhandle, 29 ) #runtime
+    #xbmcplugin.addSortMethod(pluginhandle, 28 ) #by MPAA
 
     tree=getXML(url,tree)
     if tree is None:
