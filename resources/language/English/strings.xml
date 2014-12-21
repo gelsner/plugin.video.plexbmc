@@ -105,4 +105,17 @@
 	<string id="30101">Mark as Watched</string>
 	<string id="30102">Rescan library section</string>
 	<string id="30103">Reload Section</string>
+
+    <string id="30135">Error</string>
+    <string id="30150">Skin does not support setting views</string>
+
+
+    <!-- Default views -->
+    <string id="30300">Active</string>              
+    <string id="30301">Clear Settings</string>              
+    <string id="30302">Movies</string>              
+    <string id="30305">Series</string>              
+    <string id="30306">Seasons</string>              
+    <string id="30307">Episodes</string>              
+
 </strings>

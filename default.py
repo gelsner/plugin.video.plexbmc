@@ -109,6 +109,7 @@ _MODE_SHARED_MUSIC=26
 _MODE_SHARED_PHOTOS=27
 _MODE_DELETE_REFRESH=28
 _MODE_SHARED_ALL=29
+_MODE_SETVIEWS=30
 
 _SUB_AUDIO_XBMC_CONTROL="0"
 _SUB_AUDIO_PLEX_CONTROL="1"
@@ -1303,119 +1304,15 @@ def enforceSkinView(mode):
 
     printDebug("== ENTER: enforceSkinView ==", False)
 
-    if __settings__.getSetting('skinoverride') == "false":
-        return None
-
-    skinname = __settings__.getSetting('skinname')
-
-    current_skin_name = xbmc.getSkinDir()
-
-    skin_map = { '0' : 'skin.aeon.nox5.helix.mediabrowser' ,
-                 '3' : 'skin.confluence' ,
-                 '1' : 'skin.quartz' ,
-                 '2' : 'skin.quartz3' ,
-                 '4' : 'skin.amber' }
+    if xbmc.getCondVisibility("System.HasAddon(plugin.video.plexbmc)"):
+        __settings__ = xbmcaddon.Addon(id='plugin.video.plexbmc')
+        #if __settings__.getSetting(xbmc.getSkinDir()+ '_VIEW_' + containerType) != "disabled":
+        defined_view = __settings__.getSetting(xbmc.getSkinDir()+ '_VIEW_' + mode)
     
-    if skin_map[skinname] not in current_skin_name:
-        printDebug("Do not have the correct skin [%s] selected in settings [%s] - ignoring" % (current_skin_name, skin_map[skinname]))
+    if defined_view == '':
         return None
-    
-    if mode == "movie":
-        printDebug("Looking for movie skin settings")
-        viewname = __settings__.getSetting('mo_view_%s' % skinname)
-
-    elif mode == "tv":
-        printDebug("Looking for tv skin settings")
-        viewname = __settings__.getSetting('tv_view_%s' % skinname)
-
-    elif mode == "music":
-        printDebug("Looking for music skin settings")
-        viewname = __settings__.getSetting('mu_view_%s' % skinname)
-
-    elif mode == "episode":
-        printDebug("Looking for music skin settings")
-        viewname = __settings__.getSetting('ep_view_%s' % skinname)
-
-    elif mode == "season":
-        printDebug("Looking for music skin settings")
-        viewname = __settings__.getSetting('se_view_%s' % skinname)
-
     else:
-        viewname = "None"
-
-    printDebug("view name is %s" % viewname)
-
-    if viewname == "None":
-        return None
-
-    QuartzV3_views={ 'List' : 50,
-                     'Big List' : 51,
-                     'MediaInfo' : 52,
-                     'MediaInfo 2' : 54,
-                     'Big Icons' : 501,
-                     'Icons': 53,
-                     'Panel' : 502,
-                     'Wide' : 55,
-                     'Fanart 1' : 57,
-                     'Fanart 2' : 59,
-                     'Fanart 3' : 500 }
-
-    Quartz_views={ 'List' : 50,
-                   'MediaInfo' : 51,
-                   'MediaInfo 2' : 52,
-                   'Icons': 53,
-                   'Wide' : 54,
-                   'Big Icons' : 55,
-                   'Icons 2' : 56 ,
-                   'Panel' : 57,
-                   'Fanart' : 58,
-                   'Fanart 2' : 59 }
-
-    Confluence_views={ 'List' : 50,
-                       'Big List' : 51,
-                       'Thumbnail' : 500,
-                       'Poster Wrap': 501,
-                       'Fanart' : 508,
-                       'Media Info' : 504,
-                       'Media Info 2' : 503,
-                       'Media Info 3' : 515,
-                       'Wide Icons' : 505 }
-    
-    Amber_views = {  'List' : 50,
-                       'Big List' : 52,
-                       'Panel': 51,
-                       'Low List' : 54,
-                       'Icons' : 53,
-                       'Big Panel' : 55,
-                       'Fanart' : 59 }
-
-    AeonNox_views = {  'List' : 50,
-                       'Info Wall' : 51,
-                       'Landscape': 52,
-                       'Showcase' : 53,
-                       'TriPanel' : 55,
-                       'Posters' : 56,
-                       'Shift' : 57,
-                       'BannerWall' : 58,
-                       'Logo' : 59,
-                       'Wall' : 500,
-                       'Low List' : 501,
-                       'Episode' : 502,
-                       'BannerInfo' : 505 }
-
-    skin_list={"0" : AeonNox_views ,
-               "1" : Quartz_views ,
-               "2" : QuartzV3_views,
-               "3" : Confluence_views,
-               "4" : Amber_views }
-
-    printDebug("Using skin view: %s" % skin_list[skinname][viewname])
-
-    try:
-        return skin_list[skinname][viewname]
-    except:
-        print "PleXBMC -> skin name or view name error"
-        return None
+        return defined_view
 
 def Movies( url, tree=None ):
     printDebug("== ENTER: Movies() ==", False)
@@ -1445,7 +1342,6 @@ def Movies( url, tree=None ):
 
         movieTag(url, server, tree, movie, randomNumber)
 
-    printDebug ("Skin override is: %s" % __settings__.getSetting('skinoverride'))
     view_id = enforceSkinView('movie')
     if view_id:
         xbmc.executebuiltin("Container.SetViewMode(%s)" % view_id)
@@ -1562,7 +1458,6 @@ def TVShows( url, tree=None ):
 
         addGUIItem(u,details,extraData, context)
 
-    printDebug ("Skin override is: %s" % __settings__.getSetting('skinoverride'))
     view_id = enforceSkinView('tv')
     if view_id:
         xbmc.executebuiltin("Container.SetViewMode(%s)" % view_id)
@@ -1647,7 +1542,6 @@ def TVSeasons( url ):
         #Build the screen directory listing
         addGUIItem(url,details,extraData, context)
 
-    printDebug ("Skin override is: %s" % __settings__.getSetting('skinoverride'))
     view_id = enforceSkinView('season')
     if view_id:
         xbmc.executebuiltin("Container.SetViewMode(%s)" % view_id)
@@ -1790,7 +1684,6 @@ def TVEpisodes( url, tree=None ):
 
         addGUIItem(u,details,extraData, context, folder=False)
 
-    printDebug ("Skin override is: %s" % __settings__.getSetting('skinoverride'))
     view_id = enforceSkinView('episode')
     if view_id:
         xbmc.executebuiltin("Container.SetViewMode(%s)" % view_id)
@@ -2730,7 +2623,6 @@ def artist( url, tree=None ):
 
         addGUIItem(url,details,extraData)
 
-    printDebug ("Skin override is: %s" % __settings__.getSetting('skinoverride'))
     view_id = enforceSkinView('music')
     if view_id:
         xbmc.executebuiltin("Container.SetViewMode(%s)" % view_id)
@@ -2776,7 +2668,6 @@ def albums( url, tree=None ):
 
         addGUIItem(url,details,extraData)
 
-    printDebug ("Skin override is: %s" % __settings__.getSetting('skinoverride'))
     view_id = enforceSkinView('music')
     if view_id:
         xbmc.executebuiltin("Container.SetViewMode(%s)" % view_id)
@@ -2809,7 +2700,6 @@ def tracks( url,tree=None ):
 
         trackTag(server, tree, track, sectionart, sectionthumb)
 
-    printDebug ("Skin override is: %s" % __settings__.getSetting('skinoverride'))
     view_id = enforceSkinView('music')
     if view_id:
         xbmc.executebuiltin("Container.SetViewMode(%s)" % view_id)
@@ -3310,7 +3200,6 @@ def music( url, tree=None ):
             extraData['mode']=_MODE_MUSIC
             addGUIItem(u,details,extraData)
 
-    printDebug ("Skin override is: %s" % __settings__.getSetting('skinoverride'))
     view_id = enforceSkinView('music')
     if view_id:
         xbmc.executebuiltin("Container.SetViewMode(%s)" % view_id)
@@ -3596,7 +3485,7 @@ def photoTranscode( server, url, width=1280, height=720 ):
 
 def skin():
     #Gather some data and set the window properties
-    printDebug("== ENTER: amberskin() ==", False)
+    printDebug("== ENTER: skin() ==", False)
     #Get the global host variable set in settings
     WINDOW = xbmcgui.Window( 10000 )
 
@@ -3615,7 +3504,7 @@ def skin():
 
     for section in sections:
 
-        printDebug("=Enter amberskin section=", False)
+        printDebug("=Enter skin section=", False)
         printDebug(str(section), False)
         printDebug("=/section=", False)
 
@@ -4979,6 +4868,40 @@ def alterAudio ( url ):
 
     return True
 
+def showViewList(url, pluginhandle):
+    viewCats=[__language__(30302), __language__(30305), __language__(30306), __language__(30307)]
+    viewTypes=['_movie', '_tv', '_season', '_episode']
+    if "SETVIEWS" in url:
+        for viewCat in viewCats:
+            xbmcplugin.addDirectoryItem(pluginhandle, 'plugin://plugin.video.plexbmc/?url=_SHOWVIEWS' + viewTypes[viewCats.index(viewCat)] + '&mode=' + str(_MODE_SETVIEWS), xbmcgui.ListItem(viewCat, ''), isFolder=True)
+    elif "_SETVIEW_" in url:
+        category=url.split('_')[2]
+        viewNum=url.split('_')[3]
+        __settings__.setSetting(xbmc.getSkinDir()+ '_VIEW_' +category,viewNum)
+        xbmc.executebuiltin("Container.Refresh")    
+    else:
+        
+        skin_view_file = os.path.join(xbmc.translatePath('special://skin'), "views.xml")
+        skin_view_file_alt = os.path.join(xbmc.translatePath('special://skin/extras'), "views.xml")
+        if xbmcvfs.exists(skin_view_file_alt):
+            skin_view_file = skin_view_file_alt
+        try:
+            tree = etree.parse(skin_view_file)
+        except:
+            xbmcgui.Dialog().ok(__language__(30135), __language__(30150))            
+            sys.exit()
+        root = tree.getroot()
+        xbmcplugin.addDirectoryItem(pluginhandle, 'plugin://plugin.video.plexbmc?url=_SETVIEW_'+ url.split('_')[2] + '_' + '' + '&mode=' + str(_MODE_SETVIEWS), xbmcgui.ListItem(__language__(30301), 'test'))
+        
+        for view in root.findall('view'):
+            if __settings__.getSetting(xbmc.getSkinDir()+ '_VIEW_'+ url.split('_')[2]) == view.attrib['value']:
+                name=view.attrib['id'] + " (" + __language__(30300) + ")"
+            else:
+                name=view.attrib['id']
+            xbmcplugin.addDirectoryItem(pluginhandle, 'plugin://plugin.video.plexbmc?url=_SETVIEW_'+ url.split('_')[2] + '_' + view.attrib['value'] + '&mode=' + str(_MODE_SETVIEWS), xbmcgui.ListItem(name, 'test'))
+    
+    xbmcplugin.endOfDirectory(pluginhandle, cacheToDisc=False)
+
 def setWindowHeading(tree) :
     WINDOW = xbmcgui.Window( xbmcgui.getCurrentWindowId() )
     try:
@@ -5237,6 +5160,9 @@ else:
     elif mode == _MODE_DELETE_REFRESH:
         deletecache()
         xbmc.executebuiltin("Container.Refresh")
+        
+    elif mode == _MODE_SETVIEWS:
+        showViewList(param_url, pluginhandle)
 
 print "===== PLEXBMC STOP ====="
 
