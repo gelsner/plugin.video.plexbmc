@@ -1608,7 +1608,7 @@ def TVEpisodes( url, tree=None ):
 
         #Required listItem entries for XBMC
         details={'plot'        : episode.get('summary','').encode('utf-8') ,
-                 'title'       : episode.get('title','Unknown').encode('utf-8') ,
+                 'title'       : "%sx%s. %s" % (episode.get('parentIndex',tree.get('parentIndex',0)), episode.get('index',0).zfill(2), episode.get('title','Unknown').encode('utf-8')) ,
                  'sorttitle'   : episode.get('titleSort', episode.get('title','Unknown')).encode('utf-8')  ,
                  'rating'      : float(episode.get('rating',0)) ,
                  'studio'      : episode.get('studio',tree.get('studio','')).encode('utf-8') ,
@@ -1624,7 +1624,7 @@ def TVEpisodes( url, tree=None ):
             details['sorttitle'] = episode.get('sorttitle').encode('utf-8')
 
         if tree.get('mixedParents','0') == '1':
-            details['title'] = "%s - %sx%s %s" % ( details['tvshowtitle'], details['season'], str(details['episode']).zfill(2), details['title'] )
+            details['title'] = "%s - %sx%s. %s" % ( details['tvshowtitle'], details['season'], str(details['episode']).zfill(2), episode.get('title','Unknown').encode('utf-8') )
         #else:
         #    details['title'] = str(details['episode']).zfill(2) + ". " + details['title']
 
