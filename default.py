@@ -3075,7 +3075,8 @@ def movieTag(url, server, tree, movie, randomNumber):
     view_offset=movie.get('viewOffset',0)
     duration=int(mediaarguments.get('duration',movie.get('duration',0)))/1000
     if movie.get('originallyAvailableAt') is not None:
-        release_date = time.strftime('%d.%m.%Y',(time.strptime(movie.get('originallyAvailableAt'), '%Y-%m-%d')))
+        time_splitted = movie.get('originallyAvailableAt').split('-')
+        release_date = "%02s.%02s.%s" % (time_splitted[2], time_splitted[1], time_splitted[0])
     else:
         release_date = ""
 
