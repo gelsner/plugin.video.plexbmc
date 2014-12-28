@@ -1314,11 +1314,31 @@ def enforceSkinView(mode):
     else:
         return defined_view
 
+def getCollectionName( movie ):
+    for currentmovie in movie:
+        if currentmovie.tag == "Collection":
+            return currentmovie.get('tag').encode('utf-8')
+    return None
+
+
 def Movies( url, tree=None ):
     printDebug("== ENTER: Movies() ==", False)
+
+    section_id=re.search('library/sections/(.+?)/', url).group(1)
+    url_splitted = url.split('/')
+    server = getServerFromURL(url)
+
+    collectionsAlreadyCreated = []
+
+    collection_xml = getXML("%s/library/sections/%s/collection" % (server, section_id))
+    collection_dict = {}
+    for collection in collection_xml:
+        if collection.tag == 'Directory':
+           collection_dict.update({collection.get('title') : collection.get('key')})
+
     xbmcplugin.setContent(pluginhandle, 'movies')
     
-    #xbmcplugin.addSortMethod(pluginhandle, 25 ) #video title ignore THE
+    xbmcplugin.addSortMethod(pluginhandle, 25 ) #video title ignore THE
     #xbmcplugin.addSortMethod(pluginhandle, 19 )  #date added
     #xbmcplugin.addSortMethod(pluginhandle, 3 )  #date
     #xbmcplugin.addSortMethod(pluginhandle, 18 ) #rating
@@ -1331,16 +1351,15 @@ def Movies( url, tree=None ):
     if tree is None:
         return
 
-    server=getServerFromURL(url)
-
     setWindowHeading(tree)
     randomNumber=str(random.randint(1000000000,9999999999))
     #Find all the video tags, as they contain the data we need to link to a file.
     MovieTags=tree.findall('Video')
     fullList=[]
     for movie in MovieTags:
-
-        movieTag(url, server, tree, movie, randomNumber)
+        movieTag(url, server, tree, movie, randomNumber, collection_dict, collectionsAlreadyCreated)
+        if (getCollectionName(movie) is not None):
+            collectionsAlreadyCreated.append(getCollectionName(movie))
 
     view_id = enforceSkinView('movie')
     if view_id:
@@ -2937,13 +2956,18 @@ def processXML( url, tree=None ):
 
     xbmcplugin.endOfDirectory(pluginhandle,cacheToDisc=True)
 
-def movieTag(url, server, tree, movie, randomNumber):
+def movieTag(url, server, tree, movie, randomNumber, collectionDict=None, collectionsAlreadyCreated=None):
+
+    section_id=re.search('library/sections/(.+?)/', url).group(1)
+    url_splitted = url.split('/')
+    server = getServerFromURL(url)
 
     printDebug("---New Item---")
     tempgenre=[]
     tempcast=[]
     tempdir=[]
     tempwriter=[]
+    is_collection = False
 
     #Lets grab all the info we can quickly through either a dictionary, or assignment to a list
     #We'll process it later
@@ -2958,6 +2982,16 @@ def movieTag(url, server, tree, movie, randomNumber):
             tempdir.append(child.get('tag'))
         elif child.tag == "Role"  and g_skipmetadata == "false":
             tempcast.append(child.get('tag'))
+        elif child.tag == "Collection":
+            is_collection = True
+            collection_id = collectionDict[child.get('tag')]
+            collection_title = child.get('tag').encode('utf-8')
+
+    if is_collection and (not "recentlyadded" in url.lower()) and (not "/collection/" in url.lower()) and (collection_title not in collectionsAlreadyCreated):
+        addGUIItem("http://%s/library/sections/%s/collection/%s" % (server, section_id, collection_id), {"title" : collection_title}, {}, None)
+        return
+    elif is_collection and (not "recentlyadded" in url.lower()) and (not "/collection/" in url.lower()) and (collection_title in collectionsAlreadyCreated):
+        return
 
     printDebug("Media attributes are " + str(mediaarguments))
 
