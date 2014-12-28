@@ -2956,6 +2956,20 @@ def processXML( url, tree=None ):
 
     xbmcplugin.endOfDirectory(pluginhandle,cacheToDisc=True)
 
+def getContainerCounter(url):
+    html=getURL(url)
+
+    tree=etree.fromstring(html)
+    tree=getXML(url,tree)
+
+    watchedCounter = 0
+    MovieTags=tree.findall('Video')
+    for movie in MovieTags:
+        if movie.get("viewCount") is not None:
+            watchedCounter += 1
+
+    return {"all" : tree.get("size"), "watched" : watchedCounter}
+
 def movieTag(url, server, tree, movie, randomNumber, collectionDict=None, collectionsAlreadyCreated=None):
 
     section_id=re.search('library/sections/(.+?)/', url).group(1)
@@ -2988,7 +3002,13 @@ def movieTag(url, server, tree, movie, randomNumber, collectionDict=None, collec
             collection_title = child.get('tag').encode('utf-8')
 
     if is_collection and (not "recentlyadded" in url.lower()) and (not "type=1&collection" in url.lower()) and (collection_title not in collectionsAlreadyCreated):
-        addGUIItem("http://%s/library/sections/%s/all?type=1&collection=%s" % (server, section_id, collection_id), {"title" : collection_title, 'plot' : 'Boxset: ' + collection_title}, {'thumb' : getThumb(movie, server)}, None)
+        counter = getContainerCounter("http://%s/library/sections/%s/all?type=1&collection=%s" % (server, section_id, collection_id))
+        if int(counter.get("all")) > int(counter.get("watched")):
+            # Not all items of the collection are watched
+            addGUIItem("http://%s/library/sections/%s/all?type=1&collection=%s" % (server, section_id, collection_id), {"title" : collection_title, 'plot' : 'Boxset: ' + collection_title}, {'thumb' : getThumb(movie, server)}, None)
+        else:
+            # All items of the collection are watched
+            addGUIItem("http://%s/library/sections/%s/all?type=1&collection=%s" % (server, section_id, collection_id), {"title" : collection_title, 'plot' : 'Boxset: ' + collection_title, 'playcount' : 1}, {'thumb' : getThumb(movie, server)}, None)
         return
     elif is_collection and (not "recentlyadded" in url.lower()) and (not "type=1&collection" in url.lower()) and (collection_title in collectionsAlreadyCreated):
         return
