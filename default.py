@@ -2988,7 +2988,7 @@ def movieTag(url, server, tree, movie, randomNumber, collectionDict=None, collec
             collection_title = child.get('tag').encode('utf-8')
 
     if is_collection and (not "recentlyadded" in url.lower()) and (not "/collection/" in url.lower()) and (collection_title not in collectionsAlreadyCreated):
-        addGUIItem("http://%s/library/sections/%s/collection/%s" % (server, section_id, collection_id), {"title" : collection_title}, {}, None)
+        addGUIItem("http://%s/library/sections/%s/collection/%s" % (server, section_id, collection_id), {"title" : collection_title, 'plot' : 'Boxset: ' + collection_title}, {'thumb' : getThumb(movie, server)}, None)
         return
     elif is_collection and (not "recentlyadded" in url.lower()) and (not "/collection/" in url.lower()) and (collection_title in collectionsAlreadyCreated):
         return
