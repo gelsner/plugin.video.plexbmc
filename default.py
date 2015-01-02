@@ -1338,7 +1338,7 @@ def Movies( url, tree=None ):
 
     xbmcplugin.setContent(pluginhandle, 'movies')
     
-    if not "recentlyadded" in url.lower():
+    if not "recentlyadded" in url.lower() and not "recentlyviewed" in url.lower():
         xbmcplugin.addSortMethod(pluginhandle, 25 ) #video title ignore THE
     #xbmcplugin.addSortMethod(pluginhandle, 19 )  #date added
     #xbmcplugin.addSortMethod(pluginhandle, 3 )  #date
