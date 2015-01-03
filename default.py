@@ -1148,6 +1148,10 @@ def addGUIItem(url, details, extraData, context=None, folder=True):
             liz.setArt({ "season.poster" : seasonPath })
             printDebug("Setting season Thumb as " + seasonPath)
 
+        #Set the boxset flag if it is one
+        if extraData.get('boxset_info') is not None:
+            liz.setProperty('boxset_info', extraData['boxset_info'])
+
         #if extraData.get('banner'):
         #    liz.setProperty('banner', extraData.get('banner') + aToken)
         #    printDebug("Setting banner as " + extraData.get('banner') + aToken)
@@ -2983,6 +2987,7 @@ def movieTag(url, server, tree, movie, randomNumber, collectionDict=None, collec
     tempdir=[]
     tempwriter=[]
     is_collection = False
+    boxset_info = ''
 
     #Lets grab all the info we can quickly through either a dictionary, or assignment to a list
     #We'll process it later
@@ -3006,10 +3011,12 @@ def movieTag(url, server, tree, movie, randomNumber, collectionDict=None, collec
         counter = getContainerCounter("http://%s/library/sections/%s/all?type=1&collection=%s" % (server, section_id, collection_id))
         if int(counter.get("all")) > int(counter.get("watched")):
             # Not all items of the collection are watched
-            addGUIItem("http://%s/library/sections/%s/all?type=1&collection=%s" % (server, section_id, collection_id), {"title" : collection_title, 'plot' : 'Boxset: ' + collection_title}, {'thumb' : getThumb(movie, server)}, None)
+            boxset_info = 'set' # Property for skin
+            addGUIItem("http://%s/library/sections/%s/all?type=1&collection=%s" % (server, section_id, collection_id), {"title" : collection_title, 'plot' : 'Boxset: ' + collection_title}, {'thumb' : getThumb(movie, server), 'boxset_info' : boxset_info}, None)
         else:
             # All items of the collection are watched
-            addGUIItem("http://%s/library/sections/%s/all?type=1&collection=%s" % (server, section_id, collection_id), {"title" : collection_title, 'plot' : 'Boxset: ' + collection_title, 'playcount' : 1}, {'thumb' : getThumb(movie, server)}, None)
+            boxset_info = 'set_watched' # Property for skin
+            addGUIItem("http://%s/library/sections/%s/all?type=1&collection=%s" % (server, section_id, collection_id), {"title" : collection_title, 'plot' : 'Boxset: ' + collection_title, 'playcount' : 1}, {'thumb' : getThumb(movie, server), 'boxset_info' : boxset_info}, None)
         return
     elif is_collection and (not "recentlyadded" in url.lower()) and (not "type=1&collection" in url.lower()) and (collection_title in collectionsAlreadyCreated):
         return
@@ -3052,6 +3059,8 @@ def movieTag(url, server, tree, movie, randomNumber, collectionDict=None, collec
         details['playcount'] = 1
     elif int(movie.get('viewCount',0)) == 0:
         details['playcount'] = 0
+
+    extraData['is_boxset'] = is_collection
 
     #Extended Metadata
     if g_skipmetadata == "false":
