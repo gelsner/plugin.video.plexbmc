@@ -3009,7 +3009,7 @@ def movieTag(url, server, tree, movie, randomNumber, collectionDict=None, collec
             collection_title = child.get('tag').encode('utf-8')
             counter = getContainerCounter("http://%s/library/sections/%s/all?type=1&collection=%s" % (server, section_id, collection_id))
     
-    if is_collection and (not "recentlyadded" in url.lower()) and (not "type=1&collection" in url.lower()) and (collection_title not in collectionsAlreadyCreated) and (counter.get("all") > 1):
+    if is_collection and (not "recentlyadded" in url.lower()) and (not "recentlyviewed" in url.lower()) and (not "/watched" in url.lower()) and (not "/unwatched" in url.lower()) and (not "/year" in url.lower()) and (not "/genre" in url.lower()) and (not "type=1&collection" in url.lower()) and (collection_title not in collectionsAlreadyCreated) and (counter.get("all") > 1):
         if int(counter.get("all")) > int(counter.get("watched")):
             # Not all items of the collection are watched
             boxset_info = 'set' # Property for skin
